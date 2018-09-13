@@ -1,0 +1,18 @@
+version: '2'
+services:
+  apache-php:
+    image: nimmis/apache-php7
+    ports:
+      - "12345:80"
+    volumes:
+      - .:/var/www/html/
+  redis:
+    image: redis
+
+# (EXTENDED-HA)
+#  master:
+
+#  slave:
+
+#  sentinel:
+

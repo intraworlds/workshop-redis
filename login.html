@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>IW Redis Chat</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="text/javascript" src="functions.js"></script>
+
+</head>
+<body>
+<div id="loginField">
+    <h1 style="color: white">Redis chat demo</h1>
+    <input placeholder="Username" type="text" id="usernameField">
+    <input placeholder="Password" type="password" id="passwordField">
+    <input type="submit" value="Log In" id="loginButton">
+</div>
+
+    <script>
+        var loginButton = document.getElementById('loginButton');
+        var username    = document.getElementById('usernameField');
+        var password    = document.getElementById('passwordField');
+
+        loginButton.addEventListener('click', function() {
+            loginButton.disabled = true;
+
+            xhr('POST', 'src/login.php', [['username', username.value], ['password', password.value]], function(response){
+                window.location.replace("index.html");
+            }, function(response){
+                alert(response);
+                loginButton.disabled = false;
+            });
+        });
+
+    </script>
+</body>
+</html>

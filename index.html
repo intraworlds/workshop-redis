@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>IW Redis Chat</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="text/javascript" src="functions.js"></script>
+</head>
+<body style="display:none;">
+    <div id="headerDiv">
+        <h1 id="header">Redis chat demo</h1>
+        <button id="logOutButton">Log Out</button>
+    </div>
+    <div id="inputField">
+        <input placeholder="Send a message to this chat!" type="text" id="text-input">
+        <input type="submit" value="Send" id="send-button">
+    </div>
+    <div id="messages"></div>
+
+    <script>
+        var sendBtn = document.getElementById('send-button');
+        var logoutBtn = document.getElementById('logOutButton');
+        var text = document.getElementById('text-input');
+        var messages = document.getElementById('messages');
+
+        xhr('GET', 'src/showMessages.php', null, function(response){
+            messages.innerHTML = response;
+            document.body.style.display = "block";
+        }, function() {
+            window.location.replace("login.html");
+        });
+
+        sendBtn.addEventListener('click', function() {
+            sendBtn.disabled = true;
+
+            xhr('POST', 'src/sendMessage.php', [['text', text.value]], function(response){
+                text.value = "";
+                sendBtn.disabled = false;
+            }, function() {
+                alert("Unauthorized!");
+                window.location.replace("login.html");
+            });
+        });
+
+
+        setInterval(function(){
+            xhr('GET', 'src/showMessages.php', null, function(response){
+                messages.innerHTML = response;
+            }, function() {
+                alert("Unauthorized!");
+                window.location.replace("login.html");
+            });
+        }, 1000);
+
+        logoutBtn.addEventListener('click', function() {
+            xhr('GET', 'src/logout.php', null, function(response){
+                window.location.replace("login.html");
+            });
+        });
+
+    </script>
+</body>
+</html>
