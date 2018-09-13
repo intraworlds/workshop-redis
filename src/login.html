@@ -23,7 +23,7 @@
         loginButton.addEventListener('click', function() {
             loginButton.disabled = true;
 
-            xhr('POST', 'src/login.php', [['username', username.value], ['password', password.value]], function(response){
+            xhr('POST', 'login.php', [['username', username.value], ['password', password.value]], function(response){
                 window.location.replace("index.html");
             }, function(response){
                 alert(response);

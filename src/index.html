@@ -23,7 +23,7 @@
         var text = document.getElementById('text-input');
         var messages = document.getElementById('messages');
 
-        xhr('GET', 'src/showMessages.php', null, function(response){
+        xhr('GET', 'showMessages.php', null, function(response){
             messages.innerHTML = response;
             document.body.style.display = "block";
         }, function() {
@@ -33,7 +33,7 @@
         sendBtn.addEventListener('click', function() {
             sendBtn.disabled = true;
 
-            xhr('POST', 'src/sendMessage.php', [['text', text.value]], function(response){
+            xhr('POST', 'sendMessage.php', [['text', text.value]], function(response){
                 text.value = "";
                 sendBtn.disabled = false;
             }, function() {
@@ -44,7 +44,7 @@
 
 
         setInterval(function(){
-            xhr('GET', 'src/showMessages.php', null, function(response){
+            xhr('GET', 'showMessages.php', null, function(response){
                 messages.innerHTML = response;
             }, function() {
                 alert("Unauthorized!");
@@ -53,7 +53,7 @@
         }, 1000);
 
         logoutBtn.addEventListener('click', function() {
-            xhr('GET', 'src/logout.php', null, function(response){
+            xhr('GET', 'logout.php', null, function(response){
                 window.location.replace("login.html");
             });
         });

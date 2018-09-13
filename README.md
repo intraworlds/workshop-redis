@@ -34,7 +34,7 @@ redis-cluster_master_1
 
 ### 2. Rozšířené zadání - Autentikace
 
-Doplňte všechny řádky označené jako `(EXTENDED TASK)` ve všech souborech v adresáři **src/**. Neupravujte žádné jiné soubory a žádné jiné řádky. Tímto dokážete aplikaci přidat kompletní session management postavený nad Redisem.
+Doplňte všechny řádky označené jako `(EXTENDED TASK)` ve všech PHP souborech v adresáři **src/**. Neupravujte žádné jiné soubory a žádné jiné řádky. Tímto dokážete aplikaci přidat kompletní session management postavený nad Redisem.
 
 Literatura: https://redis.io/topics/twitter-clone
 

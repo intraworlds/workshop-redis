@@ -5,7 +5,8 @@ services:
     ports:
       - "12345:80"
     volumes:
-      - .:/var/www/html/
+      - ./src:/var/www/html/
+      - ./vendor:/var/www/vendor/
   redis:
     image: redis
 
