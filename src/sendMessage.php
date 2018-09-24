@@ -13,10 +13,15 @@ $time = time();
 $text = $_POST['text'];
 
 // get the ID of the message
-// $messageId = _______________ (BASIC TASK)
+$last = $redis->llen("messages");
+$messageId = ++$last;
 
 // insert the message into its own hash
-// _______________ (BASIC TASK)
+$redis->hmset("message:" . $messageId, array(
+	"time" => $time,
+	"text" => $text,
+	"userId" => $userId
+));
 
 // push the message into the list of message IDs
-// _______________ (BASIC TASK)
+$redis->lpush("messages", array($messageId));
