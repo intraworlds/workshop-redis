@@ -10,11 +10,11 @@ if (!$userId) {
 }
 
 // get 10 latest messages
-// $messages = _______________ (BASIC TASK)
+$messages = $redis->lrange("messages", 0, 10);
 
 foreach ($messages as $id) {
     // get all properties of the message
-    // $message = _______________ (BASIC TASK)
+	$message = $redis->hgetall("message:" . $id);
 
     // add the author's username to the message array
     $message['username'] = 'Anonymous';
