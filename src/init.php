@@ -10,8 +10,6 @@ $redis = new Predis\Client([
 ]);
 
 function loadCurentUserId($authSecret) {
-    return 1; // EXTENDED TASK: delete this line to complete the extended task
-
     global $redis;
 
     // empty auth secret means the user is logged out
@@ -20,10 +18,12 @@ function loadCurentUserId($authSecret) {
     }
 
     // use the auth secret to get the user ID
-    // $userId = _____________ (EXTENDED TASK)
-    if ($userId) {
+	$userId = $redis->hget("users", $authSecret);
+
+    if (isset($userId)) {
         // cross check that this auth secret is also stored in the user hash
-        // $userAuthSecret = _____________ (EXTENDED TASK)
+        $userAuthSecret = $redis->hget("user:" . $userId, "authSecret");
+
         if ($userAuthSecret != $authSecret) {
             return null;
         }

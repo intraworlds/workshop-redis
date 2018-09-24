@@ -16,9 +16,14 @@ foreach ($messages as $id) {
     // get all properties of the message
 	$message = $redis->hgetall("message:" . $id);
 
-    // add the author's username to the message array
-    $message['username'] = 'Anonymous';
-    // $message['username'] = _____________ (EXTENDED TASK)
+
+	if(isset($message["userId"])){
+	    // add the author's username to the message array
+	    $message['username'] = $redis->hget("user:" . $message["userId"], "username");
+	} else {
+		$message['username'] = "Annonymous";
+	}
+
 
     printMessage($message);
 }
