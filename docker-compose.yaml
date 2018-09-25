@@ -7,13 +7,16 @@ services:
     volumes:
       - ./src:/var/www/html/
       - ./vendor:/var/www/vendor/
-  redis:
+  master:
     image: redis
-
-# (EXTENDED-HA)
-#  master:
-
-#  slave:
-
-#  sentinel:
-
+  slave:
+    image: redis
+    command: redis-server --slaveof master 6379
+  sentinel:
+    image: redis
+    command:
+      - redis-sentinel
+      - /dev/null
+      - --sentinel monitor chatapp master 6379 2
+      - --sentinel down-after-milliseconds chatapp 5000
+      - --sentinel config-epoch chatapp 0

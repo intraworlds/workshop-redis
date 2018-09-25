@@ -1,24 +1,22 @@
 <?php
 
+use Predis\Collection\Iterator;
+
 require "init.php";
 
-$userId = loadCurentUserId($_COOKIE['auth']);
+$username = verify_auth_secret($_COOKIE['auth']);
 
-if (!$userId) {
+if (!$username) {
     http_response_code(401);
     exit;
 }
 
-// get 10 latest messages
-// $messages = _______________ (BASIC TASK)
+// get messages
+$messages = new Iterator\ListKey($redis, 'messages');
 
-foreach ($messages as $id) {
+foreach ($messages as $message) {
     // get all properties of the message
-    // $message = _______________ (BASIC TASK)
-
-    // add the author's username to the message array
-    $message['username'] = 'Anonymous';
-    // $message['username'] = _____________ (EXTENDED TASK)
+    $message = json_decode($message, true);
 
     printMessage($message);
 }

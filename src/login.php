@@ -1,53 +1,41 @@
 <?php
-
-exit; // EXTENDED TASK: delete this line to complete the extended task
+define('SESSION_TTL', 3600); // 1 hour
 
 require "init.php";
 
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-// lookup the user IDs by username
-// $userId = ___________________ (EXTENDED TASK)
+// lookup the user by username
+$isRegistered = $redis->hexists('users', $username);
 
-if ($userId) {
-    // user ID exists => continue with the login flow
-    // $realPassword = __________________ (EXTENDED TASK)
-    if ($password === $realPassword) {
-        doLogin($userId);
+if ($isRegistered) {
+    // user exists => continue with the login flow
+    $hash = $redis->hget('users', $username);
+    if (password_verify($password, $hash)) {
+        doLogin($username);
     } else {
         http_response_code(401);
         echo 'This account already exists and entered password is incorrect!';
         exit;
     }
 } else {
-    // user ID does not exist => continue with the register flow
-    // obtain new user ID
-    // $userId = _________________ (EXTENDED TASK)
-    // store this user account into a hash
-    // ________________________ (EXTENDED TASK)
-    // store the user ID into a hash - this is needed to lookup user IDs by usernames
-    // ________________________ (EXTENDED TASK)
+    // user does not exist => continue with the register flow
+    $hash = password_hash($password, PASSWORD_DEFAULT); // always store only a hash of the password - USE secure methods
+    $redis->hset('users', $username, $hash);
 
     // login the user
-    doLogin($userId);
+    doLogin($username);
 }
 
-function doLogin($userId) {
+function doLogin($username) {
     global $redis;
 
     // calculate random user secret
-    $rand = rand(0, PHP_INT_MAX) . $userId;
-    $authSecret = hash('sha256', $rand);
+    $authSecret = bin2hex(random_bytes(16)); // use cryptographically safe functions (rand() is too predictable)
 
-    // delete the old auth secret (in case it exists)
-    // ________________________ (EXTENDED TASK)
+    // save session with expiration
+    $redis->setex($authSecret, SESSION_TTL, $username);
 
-    // update the auth secret stored in the user hash
-    // ________________________ (EXTENDED TASK)
-
-    // store the user ID into a hash - this is needed to lookup user IDs by user secrets
-    // ________________________ (EXTENDED TASK)
-
-    setcookie("auth", $authSecret, time() + 3600 * 24 * 365);
+    setcookie("auth", $authSecret, time() + SESSION_TTL, '', '', false, true); // make sure that session ID is not readable by JS
 }
