@@ -5,13 +5,13 @@ require "../vendor/autoload.php";
 
 $redis = new Predis\Client([
     'scheme' => 'tcp',
-    'host'   => 'redis',
+    'host' => 'localhost',
     'port'   => 6379,
+    'async' => false,
+    'throw_errors' => true
 ]);
 
 function loadCurentUserId($authSecret) {
-    return 1; // EXTENDED TASK: delete this line to complete the extended task
-
     global $redis;
 
     // empty auth secret means the user is logged out
@@ -20,10 +20,11 @@ function loadCurentUserId($authSecret) {
     }
 
     // use the auth secret to get the user ID
-    // $userId = _____________ (EXTENDED TASK)
+    $userId = $redis->executeRaw(["GET", "authSecret_$authSecret"]);
+
     if ($userId) {
         // cross check that this auth secret is also stored in the user hash
-        // $userAuthSecret = _____________ (EXTENDED TASK)
+        $userAuthSecret = $redis->executeRaw(["HGET", $userId, "authSecret"]);
         if ($userAuthSecret != $authSecret) {
             return null;
         }

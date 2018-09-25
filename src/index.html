@@ -42,6 +42,13 @@
             });
         });
 
+        text.addEventListener("keyup", function (event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                sendBtn.click();
+            }
+        });
+
 
         setInterval(function(){
             xhr('GET', 'showMessages.php', null, function(response){

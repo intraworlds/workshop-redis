@@ -13,10 +13,11 @@ $time = time();
 $text = $_POST['text'];
 
 // get the ID of the message
-// $messageId = _______________ (BASIC TASK)
+$messageId = "message_" . $redis->executeRaw(["INCR", "message_sequence"]);
 
 // insert the message into its own hash
-// _______________ (BASIC TASK)
+$username = $redis->executeRaw(["HGET", $userId, "username"]);
+$redis->executeRaw(["HMSET", $messageId, "time", $time, "text", "$text", "username", $username]);
 
 // push the message into the list of message IDs
-// _______________ (BASIC TASK)
+$redis->executeRaw(["RPUSH", "messages", $messageId]);

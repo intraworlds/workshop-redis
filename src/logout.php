@@ -1,7 +1,5 @@
 <?php
 
-exit; // EXTENDED TASK: delete this line to complete the extended task
-
 require "init.php";
 
 $userId = loadCurentUserId($_COOKIE['auth']);
@@ -12,8 +10,9 @@ if (!$userId) {
 }
 
 // delete the old auth secret
-// ___________________ (EXTENDED TASK)
+$redis->executeRaw(["HDEL", $userId, "authSecret"]);
+
 // set this user's auth secret to empty
-// ___________________ (EXTENDED TASK)
+$redis->executeRaw(["DEL", "authSecret_$authSecret"]);
 
 setcookie('auth', '', 1);
