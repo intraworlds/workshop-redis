@@ -1,36 +1,28 @@
 <?php
-
+ini_set('display_errors', 1);
 require "../vendor/autoload.php";
 
+$redis = new Predis\Client(
+    [
+        'tcp://workshop-redis_sentinel_1:26379',
+        'tcp://workshop-redis_sentinel_2:26379',
+        'tcp://workshop-redis_sentinel_3:26379',
+    ],
+    ['replication' => 'sentinel', 'service' => 'chatapp']
+);
 
-$redis = new Predis\Client([
-    'scheme' => 'tcp',
-    'host'   => 'redis',
-    'port'   => 6379,
-]);
-
-function loadCurentUserId($authSecret) {
-    return 1; // EXTENDED TASK: delete this line to complete the extended task
-
+function verify_auth_secret($authSecret) {
     global $redis;
 
     // empty auth secret means the user is logged out
-    if ($authSecret == '') {
-        return null;
-    }
-
-    // use the auth secret to get the user ID
-    // $userId = _____________ (EXTENDED TASK)
-    if ($userId) {
-        // cross check that this auth secret is also stored in the user hash
-        // $userAuthSecret = _____________ (EXTENDED TASK)
-        if ($userAuthSecret != $authSecret) {
-            return null;
+    if ($authSecret) {
+        if ($username = $redis->get($authSecret)) {
+            return $username;
         }
 
-        return $userId;
+        // invalid secret - wait few seconds to defense against brutal force attack
+        sleep(3);
     }
-
-    // no user ID was found by the auth secret
+    // no user was found by the auth secret
     return null;
 }
