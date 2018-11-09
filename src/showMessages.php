@@ -10,27 +10,30 @@ if (!$userId) {
 }
 
 // get 10 latest messages
-// $messages = _______________ (BASIC TASK)
+$messages = $redis->executeRaw(["LRANGE", "messages", "0", "10"]);
+$messages = array_reverse($messages);
 
-foreach ($messages as $id) {
+foreach ($messages as $messageId) {
     // get all properties of the message
-    // $message = _______________ (BASIC TASK)
+    $message = [];
+    $message["text"] = $redis->executeRaw(["HGET", $messageId, "text"]);
+    $message["time"] = $redis->executeRaw(["HGET", $messageId, "time"]);
 
     // add the author's username to the message array
-    $message['username'] = 'Anonymous';
-    // $message['username'] = _____________ (EXTENDED TASK)
+    $message['username'] = $redis->executeRaw(["HGET", $messageId, "username"]);
 
     printMessage($message);
 }
 
-function printMessage(array $message) {
+function printMessage(array $message)
+{
     echo "<table style=\"width:100%\">"
-        ."<tr class='infoRow'>"
-        ."<td class='userColumn'>" . $message['username'] . "</td>"
-        ."<td class='timeColumn'>". date('m/d/Y H:i:s', $message['time']) ."</td>"
-        ."</tr>"
-        ."<tr class='messageRow'>"
-        ."<td class='messageColumn'>". $message['text'] ."</td>"
-        ."</tr>"
-        ."</table>";
+        . "<tr class='infoRow'>"
+        . "<td class='userColumn'>" . $message['username'] . "</td>"
+        . "<td class='timeColumn'>" . date('m/d/Y H:i:s', $message['time']) . "</td>"
+        . "</tr>"
+        . "<tr class='messageRow'>"
+        . "<td class='messageColumn'>" . $message['text'] . "</td>"
+        . "</tr>"
+        . "</table>";
 }
